@@ -11,7 +11,7 @@ const StartingScreen = () => {
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Bem-vindo de volta
         </h1>
-        <p className="text-gray-500 mb-8 text-sm">O que vamos fazer hoje?</p>
+        <p className="text-gray-500 mb-8 text-sm">No tones</p>
 
         {/* Button Container */}
         <div className="flex flex-col gap-4">
@@ -24,7 +24,7 @@ const StartingScreen = () => {
           <NavigationButton
             text="Ensaiar"
             onClick={() => {
-              navigate("/ensaio");
+              navigate("/config");
             }}
           />
         </div>

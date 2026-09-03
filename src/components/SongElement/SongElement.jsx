@@ -74,7 +74,8 @@ export const SongElement = ({
           <span className="font-semibold text-gray-800">Pedal:</span> {pedal}
         </p>
         <p>
-          <span className="font-semibold text-gray-800">Obs:</span> {obs}
+          <span className="font-semibold text-gray-800">Obs: </span>{" "}
+          {obs ? obs : "Nenhuma"}
         </p>
         <p className="text-gray-400 text-xs mt-3 text-right">
           Last Played: {lastPlayed ? lastPlayed.toLocaleDateString() : "Never"}
