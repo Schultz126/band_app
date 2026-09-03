@@ -1,0 +1,11 @@
+1: O próximo ensaio deve ser agendado para que os membros da banda saibam quais músicas precisam ser tocadas
+  Para isso pensei em fazer uma tela inicial, com a opção de verificar o setlist, agendar ensaio e iniciar ensaio
+
+  Tela inicial 
+    - setlist
+        - Acesso à lista de músicas, onde será possível modificar as músicas existentes e adicionar novas
+    - Agendar 
+        - Define uma data para o ensaio e monta o setlist se baseando nas músicas que fazem mais tempo que não são tocadas
+    - Ensaiar
+        - Se não tiver um ensaio agendado, agenda e inicia
+        - Muda a última data de cada música para a data atual
