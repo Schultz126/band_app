@@ -31,7 +31,7 @@ class Song {
    *
    */
   setNewDate() {
-    this.date = new Date().toISOString.slice(0, 10);
+    this.lastPlayed = new Date();
   }
 
   /**

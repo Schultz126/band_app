@@ -12,6 +12,15 @@ export const SongElement = ({
   howLong,
   howManyTimesHasBeingPlayed,
 }) => {
+  const greenClass =
+    "bg-green-50 text-green-700 text-xs font-semibold px-2 py-1 rounded border border-green-200";
+
+  const yellowClass =
+    "bg-yellow-50 text-yellow-700 text-xs font-semibold px-2 py-1 rounded border border-yellow-200";
+
+  const redClass =
+    "bg-red-50 text-red-700 text-xs font-semibold px-2 py-1 rounded border border-red-200";
+
   return (
     <div className="bg-white shadow-sm hover:shadow-md transition-shadow duration-200 rounded-xl p-5 mb-4 border border-gray-200">
       {/* Header: Title, Artist, and Stars */}
@@ -27,13 +36,21 @@ export const SongElement = ({
 
       {/* Badges: Status & Acoustic Guitar */}
       <div className="flex flex-wrap gap-2 mb-4">
-        <span className="bg-blue-50 text-blue-700 text-xs font-semibold px-2 py-1 rounded border border-blue-200">
+        <span
+          className={
+            status === "ok"
+              ? greenClass
+              : status === "ensaiar"
+                ? yellowClass
+                : redClass
+          }
+        >
           Status: {status}
         </span>
         <br />
         {hasAcousticGuitar && (
-          <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2 py-1 rounded border border-emerald-200">
-            Acoustic: Yes
+          <span className="bg-amber-50 text-amber-700 text-xs font-semibold px-2 py-1 rounded border border-amber-200">
+            Acoustic Guitar
           </span>
         )}
       </div>

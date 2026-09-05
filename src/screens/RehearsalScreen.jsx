@@ -1,5 +1,6 @@
 import ENSAIO from "../dummie_data/Ensaio/ensaio";
 import SongElement from "../components/SongElement/SongElement";
+import FinishButton from "../components/FinishButton/FinishButton";
 
 const RehearsalScreen = () => {
   const totalSeconds = ENSAIO.reduce((total, song) => {
@@ -35,6 +36,7 @@ const RehearsalScreen = () => {
             <p className="mt-6 text-lg font-semibold text-gray-800">
               Duração total: {totalLength}
             </p>
+            <FinishButton />
           </>
         )}
       </div>

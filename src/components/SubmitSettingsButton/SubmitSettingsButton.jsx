@@ -77,12 +77,11 @@ const SubmitSettingsButton = ({ time, songs }) => {
       alert(
         "Por favor, preencha o tempo disponível e a quantidade de músicas para prosseguir.",
       );
-      return; // Interrompe a execução aqui
+      return; // Interrompe a execução
     }
 
     setEnsaio({ time, songs });
 
-    // Avança para a tela de ensaio
     navigate(-1);
   };
 
