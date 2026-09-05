@@ -26,6 +26,20 @@ class Song {
     this.howLong = howLong;
     this.howManyTimesHasBeingPlayed = howManyTimesHasBeingPlayed;
   }
+
+  /**
+   *
+   */
+  setNewDate() {
+    this.date = new Date().toISOString.slice(0, 10);
+  }
+
+  /**
+   *
+   */
+  updateTimesPlayed() {
+    this.howManyTimesHasBeingPlayed += 1;
+  }
 }
 
 export default Song;

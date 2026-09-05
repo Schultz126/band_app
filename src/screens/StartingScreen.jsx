@@ -22,9 +22,15 @@ const StartingScreen = () => {
             }}
           />
           <NavigationButton
-            text="Ensaiar"
+            text="Agendar ensaio"
             onClick={() => {
               navigate("/config");
+            }}
+          />
+          <NavigationButton
+            text="Ensaiar"
+            onClick={() => {
+              navigate("/ensaio");
             }}
           />
         </div>
