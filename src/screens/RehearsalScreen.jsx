@@ -1,6 +1,7 @@
 import ENSAIO from "../dummie_data/Ensaio/ensaio";
 import SongElement from "../components/SongElement/SongElement";
 import FinishButton from "../components/FinishButton/FinishButton";
+import GoBackbutton from "../components/GoBackButton/GoBackButton";
 
 const RehearsalScreen = () => {
   const totalSeconds = ENSAIO.reduce((total, song) => {
@@ -18,7 +19,8 @@ const RehearsalScreen = () => {
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-8">
+        <GoBackbutton />
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-8 mt-2">
           Setlist do ensaio
         </h1>
 

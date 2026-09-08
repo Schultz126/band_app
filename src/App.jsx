@@ -4,6 +4,7 @@ import StartingScreen from "./screens/StartingScreen";
 import RehearsalScreen from "./screens/RehearsalScreen";
 import SetListScreen from "./screens/SetListScreen";
 import RehearsalSettingsScreen from "./screens/RehearsalSettingsScreen";
+import AddSongScreen from "./screens/AddSongScreen";
 
 function App() {
   return (
@@ -12,6 +13,8 @@ function App() {
       <Route path="/config" element={<RehearsalSettingsScreen />} />
       <Route path="/ensaio" element={<RehearsalScreen />} />
       <Route path="/set-list" element={<SetListScreen />} />
+      <Route path="/set-list/add-song" element={<AddSongScreen />} />
+      <Route path="/set-list/edit-song" element={<AddSongScreen />} />
     </Routes>
   );
 }
