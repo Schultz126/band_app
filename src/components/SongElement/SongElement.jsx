@@ -22,11 +22,12 @@ export const SongElement = (props) => {
     obs,
     howLong,
     howManyTimesHasBeingPlayed,
-    onStatusChange, // New prop to handle dropdown changes in the parent
+    onStatusChange,
+    onRemove, // <-- New prop for deleting
   } = props;
 
   const navigate = useNavigate();
-  const [isExpanded, setIsExpanded] = useState(false); // Local expansion state
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white shadow-sm transition hover:border-gray-300 hover:shadow-md">
@@ -57,7 +58,11 @@ export const SongElement = (props) => {
           <div
             className="cursor-pointer mb-4 hover:opacity-80 transition-opacity"
             onClick={() => {
-              navigate("/set-list/edit-song", { state: props });
+              // 1. Separa as funções dos dados. Estava dando problema pq o app tentava ler funções como dados
+              const { onStatusChange, onRemove, ...songData } = props;
+
+              // 2. Manda apenas os dados
+              navigate("/set-list/edit-song", { state: songData });
             }}
           >
             <div className="flex justify-between items-start mb-3">
@@ -126,22 +131,36 @@ export const SongElement = (props) => {
             </div>
           </div>
 
-          {/* Status Dropdown (Outside the clickable navigation area) */}
-          <div className="border-t border-gray-100 pt-3">
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Alterar status
-            </label>
-            <select
-              value={status}
-              onChange={(event) => onStatusChange(event.target.value)}
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
-            >
-              {SONG_STATUSES.map((songStatus) => (
-                <option key={songStatus} value={songStatus}>
-                  {songStatus}
-                </option>
-              ))}
-            </select>
+          <div className="border-t border-gray-100 pt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            {/* Status Dropdown */}
+            <div className="flex-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Alterar status
+              </label>
+              <select
+                value={status}
+                onChange={(event) =>
+                  onStatusChange && onStatusChange(event.target.value)
+                }
+                className="w-full sm:w-48 rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+              >
+                {SONG_STATUSES.map((songStatus) => (
+                  <option key={songStatus} value={songStatus}>
+                    {songStatus}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Remove Button */}
+            {onRemove && (
+              <button
+                onClick={onRemove}
+                className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-bold text-red-700 transition hover:bg-red-100"
+              >
+                Remover do Ensaio
+              </button>
+            )}
           </div>
         </div>
       )}
