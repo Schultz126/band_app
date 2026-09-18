@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import GoBackbutton from "../components/GoBackButton/GoBackButton";
-import Song from "../dummie_data/Song";
-import { SONGS } from "../dummie_data/songs";
+import { useSetList } from "../context/SetListContext";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+);
 
 const inputClass =
   "mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 shadow-sm transition focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900";
@@ -23,13 +28,13 @@ const DEFAULT_SONG = {
 const AddSongScreen = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { reload } = useSetList();
 
-  // 1. Extract initial data and edit status FIRST
   const initialData = location.state;
   const isEditing = Boolean(initialData);
 
-  // 2. Initialize state safely using passed data or defaults
   const [song, setSong] = useState(initialData || DEFAULT_SONG);
+  const [saving, setSaving] = useState(false);
 
   const updateSong = (event) => {
     const { name, value, type, checked } = event.target;
@@ -39,8 +44,7 @@ const AddSongScreen = () => {
     }));
   };
 
-  // 3. Single consolidated submit handler
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!song.artist || !song.bpm || !song.name || !song.howLong) {
@@ -48,50 +52,46 @@ const AddSongScreen = () => {
       return;
     }
 
+    setSaving(true);
+
+    const payload = {
+      name: song.name.trim(),
+      artist: song.artist.trim(),
+      tune: song.tune.trim(),
+      status: song.status,
+      hasAcousticGuitar: song.hasAcousticGuitar,
+      bpm: Number(song.bpm),
+      star: Number(song.star),
+      pedal: song.pedal.trim(),
+      obs: song.obs.trim(),
+      howLong: song.howLong,
+    };
+
+    let error;
+
     if (isEditing) {
-      const songIndex = SONGS.findIndex(
-        (s) => s.name === initialData.name && s.artist === initialData.artist,
-      );
-
-      const updatedSong = new Song(
-        song.name.trim(),
-        song.artist.trim(),
-        song.tune.trim(),
-        initialData.lastPlayed,
-        song.status,
-        song.hasAcousticGuitar,
-        Number(song.bpm),
-        Number(song.star),
-        song.pedal.trim(),
-        song.obs.trim(),
-        song.howLong,
-        initialData.howManyTimesHasBeingPlayed,
-      );
-
-      if (songIndex !== -1) {
-        SONGS[songIndex] = updatedSong;
-      } else {
-        SONGS.push(updatedSong);
-      }
+      // Only update fields the form edits; leave lastPlayed / howManyTimesHasBeingPlayed untouched
+      ({ error } = await supabase
+        .from("set_list")
+        .update(payload)
+        .eq("id", initialData.id));
     } else {
-      SONGS.push(
-        new Song(
-          song.name.trim(),
-          song.artist.trim(),
-          song.tune.trim(),
-          null,
-          song.status,
-          song.hasAcousticGuitar,
-          Number(song.bpm),
-          Number(song.star),
-          song.pedal.trim(),
-          song.obs.trim(),
-          song.howLong,
-          0,
-        ),
-      );
+      ({ error } = await supabase.from("set_list").insert({
+        ...payload,
+        lastPlayed: null,
+        howManyTimesHasBeingPlayed: 0,
+      }));
     }
 
+    setSaving(false);
+
+    if (error) {
+      console.error("Failed to save song:", error);
+      alert("Erro ao salvar a música. Tente novamente.");
+      return;
+    }
+
+    await reload(); // refresh the shared songs list from Supabase
     navigate("/set-list");
   };
 
@@ -240,9 +240,14 @@ const AddSongScreen = () => {
             <div className="border-t border-gray-100 pt-6">
               <button
                 type="submit"
-                className="w-full rounded-lg bg-gray-900 px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
+                disabled={saving}
+                className="w-full rounded-lg bg-gray-900 px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-400"
               >
-                {isEditing ? "Salvar alterações" : "Adicionar ao set list"}
+                {saving
+                  ? "Salvando..."
+                  : isEditing
+                    ? "Salvar alterações"
+                    : "Adicionar ao set list"}
               </button>
             </div>
           </form>

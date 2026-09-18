@@ -62,7 +62,7 @@ export const SongElement = (props) => {
               const { onStatusChange, onRemove, ...songData } = props;
 
               // 2. Manda apenas os dados
-              navigate("/set-list/edit-song", { state: songData });
+              navigate("/set-list/edit-song", { state: songData }); // state: é necessário para enviar os dados específicos deste componente para a tela de edição
             }}
           >
             <div className="flex justify-between items-start mb-3">
@@ -123,7 +123,7 @@ export const SongElement = (props) => {
               <p className="text-gray-400 text-xs mt-3 text-right">
                 Last Played:{" "}
                 {lastPlayed ? (
-                  lastPlayed.toLocaleDateString()
+                  lastPlayed.toLocaleDateString() // lastPlayed.toLocaleDateString() causes the app to crash. It only works with local data
                 ) : (
                   <span className="text-red-400">Never</span>
                 )}

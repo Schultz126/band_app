@@ -1,8 +1,30 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NavigationButton from "../components/NavigationButton/NavigationButton";
+import { createClient } from "@supabase/supabase-js";
+
+/*const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+);*/
 
 const StartingScreen = () => {
   const navigate = useNavigate();
+
+  /*useEffect(() => {
+    const loadSetList = async () => {
+      const { data, error } = await supabase.from("set_list").select("*");
+
+      if (error) {
+        console.error("Failed to load instruments:", error);
+        return;
+      }
+
+      console.log(data);
+    };
+
+    loadSetList();
+  }, []);*/
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">

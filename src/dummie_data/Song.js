@@ -1,5 +1,6 @@
 class Song {
   constructor(
+    id,
     name,
     artist,
     tune,
@@ -13,6 +14,7 @@ class Song {
     howLong,
     howManyTimesHasBeingPlayed,
   ) {
+    this.id = id;
     this.name = name;
     this.artist = artist;
     this.tune = tune;
