@@ -1,19 +1,33 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ENSAIO from "../dummie_data/Ensaio/ensaio";
-import { SONGS } from "../dummie_data/songs";
+import { createClient } from "@supabase/supabase-js";
+import { useEnsaio } from "../context/RehearsalContext";
+import { useMusicasDoEnsaio } from "../context/MusicaDoEnsaioContext";
+import { useSetList } from "../context/SetListContext";
 import SongElement from "../components/SongElement/SongElement";
 import GoBackbutton from "../components/GoBackButton/GoBackButton";
 import GeneralButton from "../components/GeneralButton/GeneralButton";
 
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+);
+
 const RehearsalScreen = () => {
-  // Use state to force re-renders when mutating ENSAIO
-  const [rehearsalSongs, setRehearsalSongs] = useState([...ENSAIO]);
+  const { ensaio, finishEnsaio } = useEnsaio();
+  const {
+    songs: rehearsalSongs,
+    addSong,
+    removeSong,
+    reload: reloadMusicasDoEnsaio,
+  } = useMusicasDoEnsaio();
+  const { songs: allSongs } = useSetList();
+
   const [isAddModalOpen, setIsAddModalOpen] = useState(false); // Modal para adicionar novas músicas
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false); // Modal para confirmar finalização do ensaio
+  const [finishing, setFinishing] = useState(false);
   const navigate = useNavigate();
 
-  // Calculate dynamic time based on state, not directly from ENSAIO
   const totalSeconds = rehearsalSongs.reduce((total, song) => {
     const [minutes, seconds] = song.howLong.split(":").map(Number);
     return total + minutes * 60 + seconds;
@@ -28,42 +42,78 @@ const RehearsalScreen = () => {
     .join(":");
 
   // --- Actions ---
-  const handleRemoveSong = (indexToRemove) => {
-    // Mutate the original imported array
-    ENSAIO.splice(indexToRemove, 1);
-    // Update local state
-    setRehearsalSongs([...ENSAIO]);
+  // musica_id (the join table's FK to set_list) is the same value as the
+  // song's own id, so we can pass item.id straight through.
+  const handleRemoveSong = async (musicaId) => {
+    const { error } = await removeSong(musicaId);
+    if (error) alert("Erro ao remover música do ensaio. Tente novamente.");
   };
 
-  const handleAddSong = (song) => {
-    ENSAIO.push(song);
-    setRehearsalSongs([...ENSAIO]);
+  const handleAddSong = async (song) => {
+    const { error } = await addSong(song.id);
+    if (error) {
+      alert("Erro ao adicionar música ao ensaio. Tente novamente.");
+      return;
+    }
     setIsAddModalOpen(false);
   };
 
-  const handleStatusChange = (index, newStatus) => {
-    ENSAIO[index].status = newStatus;
+  // status lives on set_list itself (shared across the whole app, not
+  // just this rehearsal), so it's updated there directly.
+  const handleStatusChange = async (songId, newStatus) => {
+    const { error } = await supabase
+      .from("set_list")
+      .update({ status: newStatus })
+      .eq("id", songId);
 
-    // Also update main SONGS array if required
-    const mainSong = SONGS.find((s) => s.name === ENSAIO[index].name);
-    if (mainSong) mainSong.status = newStatus;
+    if (error) {
+      console.error("Failed to update song status:", error);
+      alert("Erro ao atualizar status da música.");
+      return;
+    }
 
-    setRehearsalSongs([...ENSAIO]);
+    await reloadMusicasDoEnsaio();
   };
 
-  // Find songs from main library that are not in the current rehearsal
-  const availableSongs = SONGS.filter(
-    (mainSong) => !rehearsalSongs.some((rSong) => rSong.name === mainSong.name),
+  // Songs from the main library that aren't already in this rehearsal
+  const availableSongs = allSongs.filter(
+    (mainSong) => !rehearsalSongs.some((rSong) => rSong.id === mainSong.id),
   );
 
-  // Deverá ser modificada para salvar as alterações no banco de dados
-  const finishRehearsal = () => {
-    ENSAIO.forEach((song) => {
-      if (song.setNewDate) song.setNewDate();
-      if (song.updateTimesPlayed) song.updateTimesPlayed();
-    });
+  const finishRehearsal = async () => {
+    setFinishing(true);
 
-    ENSAIO.splice(0, ENSAIO.length); // Clears the ENSAIO array
+    // Record that today's rehearsal covered these songs
+    const today = new Date().toISOString();
+    const updates = rehearsalSongs.map((song) =>
+      supabase
+        .from("set_list")
+        .update({
+          lastPlayed: today,
+          howManyTimesHasBeingPlayed:
+            (song.howManyTimesHasBeingPlayed || 0) + 1,
+        })
+        .eq("id", song.id),
+    );
+
+    const results = await Promise.all(updates);
+    const failed = results.find((result) => result.error);
+
+    if (failed) {
+      console.error("Failed to update songs after rehearsal:", failed.error);
+      setFinishing(false);
+      alert("Erro ao registrar as músicas do ensaio. Tente novamente.");
+      return;
+    }
+
+    const { error } = await finishEnsaio();
+    setFinishing(false);
+
+    if (error) {
+      alert("Erro ao finalizar o ensaio. Tente novamente.");
+      return;
+    }
+
     navigate(-1);
   };
 
@@ -91,14 +141,14 @@ const RehearsalScreen = () => {
         ) : (
           <>
             <ul className="grid grid-cols-1 md:grid-cols-1 gap-6">
-              {rehearsalSongs.map((item, index) => (
-                <li key={`${item.name}-${index}`} className="list-none">
+              {rehearsalSongs.map((item) => (
+                <li key={item.id} className="list-none">
                   <SongElement
                     {...item}
                     onStatusChange={(status) =>
-                      handleStatusChange(index, status)
+                      handleStatusChange(item.id, status)
                     }
-                    onRemove={() => handleRemoveSong(index)}
+                    onRemove={() => handleRemoveSong(item.id)}
                   />
                 </li>
               ))}
@@ -109,7 +159,7 @@ const RehearsalScreen = () => {
             <div className="mt-6">
               <GeneralButton
                 text={"Finalizar ensaio"}
-                onClick={() => setConfirmModalOpen(true)} // changed this to open the modal
+                onClick={() => setConfirmModalOpen(true)}
               />
             </div>
           </>
@@ -139,9 +189,9 @@ const RehearsalScreen = () => {
                 </p>
               ) : (
                 <ul className="divide-y divide-gray-100">
-                  {availableSongs.map((song, idx) => (
+                  {availableSongs.map((song) => (
                     <li
-                      key={idx}
+                      key={song.id}
                       className="flex justify-between items-center p-3 hover:bg-gray-50 transition rounded-lg"
                     >
                       <div>
@@ -179,16 +229,17 @@ const RehearsalScreen = () => {
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setConfirmModalOpen(false)}
-                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition"
+                disabled={finishing}
+                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Cancelar
               </button>
-              {/* Essa confrimação será usada para reescrever a tabela de ensaio no servidor */}
               <button
                 onClick={finishRehearsal}
-                className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-bold text-white hover:bg-gray-800 transition"
+                disabled={finishing}
+                className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-bold text-white hover:bg-gray-800 transition disabled:cursor-not-allowed disabled:bg-gray-400"
               >
-                Confirmar
+                {finishing ? "Finalizando..." : "Confirmar"}
               </button>
             </div>
           </div>

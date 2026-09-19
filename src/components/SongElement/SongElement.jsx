@@ -123,7 +123,10 @@ export const SongElement = (props) => {
               <p className="text-gray-400 text-xs mt-3 text-right">
                 Last Played:{" "}
                 {lastPlayed ? (
-                  lastPlayed.toLocaleDateString() // lastPlayed.toLocaleDateString() causes the app to crash. It only works with local data
+                  // lastPlayed comes back from Supabase as an ISO string, not
+                  // a Date object, so it has to go through `new Date(...)`
+                  // before .toLocaleDateString() can be called on it.
+                  new Date(lastPlayed).toLocaleDateString()
                 ) : (
                   <span className="text-red-400">Never</span>
                 )}

@@ -2,10 +2,13 @@ import { useState } from "react";
 import SubmitSettingsButton from "../components/SubmitSettingsButton/SubmitSettingsButton";
 import GoBackbutton from "../components/GoBackButton/GoBackButton";
 
+const todayAsDateInputValue = () => new Date().toISOString().slice(0, 10);
+
 const RehearsalSettingsScreen = () => {
   const [time, setTime] = useState("");
   const [songs, setSongs] = useState("");
-  const [date, setDate] = useState(new Date());
+  // Native <input type="date"> needs a "YYYY-MM-DD" string, not a Date object
+  const [date, setDate] = useState(todayAsDateInputValue());
 
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-10 sm:px-6 lg:px-8">
@@ -53,7 +56,7 @@ const RehearsalSettingsScreen = () => {
                 />
               </div>
 
-              <SubmitSettingsButton time={time} songs={songs} />
+              <SubmitSettingsButton time={time} songs={songs} date={date} />
             </div>
           </div>
         </div>

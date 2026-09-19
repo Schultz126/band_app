@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import GoBackbutton from "../components/GoBackButton/GoBackButton";
 import { useSetList } from "../context/SetListContext";
 import { createClient } from "@supabase/supabase-js";
+import { BsTrash3 } from "react-icons/bs";
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -35,6 +36,8 @@ const AddSongScreen = () => {
 
   const [song, setSong] = useState(initialData || DEFAULT_SONG);
   const [saving, setSaving] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const updateSong = (event) => {
     const { name, value, type, checked } = event.target;
@@ -92,7 +95,34 @@ const AddSongScreen = () => {
     }
 
     await reload(); // refresh the shared songs list from Supabase
-    navigate("/set-list");
+    navigate(-1); // Por algum motivo que desconheço, usar navigate("/set-list") cria um monte de páginas na stack e faz vc voltar para páginas que podem não existir mais
+  };
+
+  // Opens the confirmation modal instead of deleting immediately
+  const handleDelete = () => {
+    setShowDeleteModal(true);
+  };
+
+  // Runs only after the user confirms inside the modal
+  const confirmDelete = async () => {
+    setDeleting(true);
+
+    const { error } = await supabase
+      .from("set_list")
+      .delete()
+      .eq("id", initialData.id);
+
+    setDeleting(false);
+
+    if (error) {
+      console.error("Failed to delete song:", error);
+      alert("Erro ao excluir a música. Tente novamente.");
+      return;
+    }
+
+    setShowDeleteModal(false);
+    await reload();
+    navigate(-1);
   };
 
   return (
@@ -102,9 +132,22 @@ const AddSongScreen = () => {
 
         <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-lg sm:p-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-              {isEditing ? `Alterar ${initialData.name}` : "Adicionar música"}
-            </h1>
+            <div className="flex flex-row justify-between">
+              <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+                {isEditing ? `Alterar ${initialData.name}` : "Adicionar música"}
+              </h1>
+              {isEditing ? (
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  className="px-4 py-2 text-sm font-bold text-red-600 transition-colors hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                >
+                  <BsTrash3 className="size-5" />
+                </button>
+              ) : (
+                <></>
+              )}
+            </div>
             <p className="mt-2 text-sm text-gray-600">
               {isEditing
                 ? "Edite os detalhes da música selecionada."
@@ -253,6 +296,48 @@ const AddSongScreen = () => {
           </form>
         </div>
       </div>
+
+      {showDeleteModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+          onClick={() => !deleting && setShowDeleteModal(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-lg sm:p-8"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 className="text-xl font-bold tracking-tight text-gray-900">
+              Excluir música?
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Tem certeza que deseja excluir{" "}
+              <span className="font-semibold text-gray-800">
+                {initialData?.name}
+              </span>
+              ? Essa ação não pode ser desfeita.
+            </p>
+
+            <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={() => setShowDeleteModal(false)}
+                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={confirmDelete}
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-red-300"
+              >
+                {deleting ? "Excluindo..." : "Excluir"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
