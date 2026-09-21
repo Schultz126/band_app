@@ -32,12 +32,6 @@ const StartingScreen = () => {
     const hasActiveEnsaio = data && data.length > 0;
     setThereIsEnsaio(hasActiveEnsaio);
 
-    if (hasActiveEnsaio) {
-      console.log("Há um ensaio ativo:", data);
-    } else {
-      console.log("Nenhum ensaio ativo");
-    }
-
     return hasActiveEnsaio;
   };
 

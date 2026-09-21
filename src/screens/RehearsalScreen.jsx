@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
 import { useEnsaio } from "../context/RehearsalContext";
@@ -13,8 +13,18 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY,
 );
 
+// ensaio.date comes back as a timestamptz string (e.g. "2026-09-19T00:00:00+00:00").
+// timeZone: "UTC" keeps the displayed day from shifting backward for anyone
+// west of UTC, since the time portion is always midnight UTC.
+const formatEnsaioDate = (dateString) => {
+  if (!dateString) return "";
+  return new Date(dateString).toLocaleDateString("pt-BR", {
+    timeZone: "UTC",
+  });
+};
+
 const RehearsalScreen = () => {
-  const { ensaio, finishEnsaio } = useEnsaio();
+  const { ensaio, finishEnsaio, reload: reloadEnsaio } = useEnsaio();
   const {
     songs: rehearsalSongs,
     addSong,
@@ -26,7 +36,20 @@ const RehearsalScreen = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false); // Modal para adicionar novas músicas
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false); // Modal para confirmar finalização do ensaio
   const [finishing, setFinishing] = useState(false);
+  const [isCancelModalOpen, setCancelModalOpen] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
   const navigate = useNavigate();
+
+  // EnsaioProvider lives at the app root and only fetches once on that
+  // initial mount, so if a rehearsal was just scheduled and we navigated
+  // straight here, its `ensaio` can be stale. Refresh it every time this
+  // screen mounts — MusicasDoEnsaioProvider reacts to ensaio?.id changing,
+  // so the songs will follow automatically once this resolves.
+  useEffect(() => {
+    reloadEnsaio();
+  }, [reloadEnsaio]);
+
+  const thereIsEnsaio = Boolean(ensaio);
 
   const totalSeconds = rehearsalSongs.reduce((total, song) => {
     const [minutes, seconds] = song.howLong.split(":").map(Number);
@@ -117,27 +140,71 @@ const RehearsalScreen = () => {
     navigate(-1);
   };
 
+  // Função para deletar o ensaio (Musicas_do_Ensaio primeiro, depois Ensaio)
+  const cancelRehearsal = async () => {
+    if (!ensaio) return;
+
+    setCancelling(true);
+
+    const { error: songsError } = await supabase
+      .from("musicas_do_ensaio")
+      .delete()
+      .eq("ensaio_id", ensaio.id);
+
+    if (songsError) {
+      console.error("Failed to delete musicas_do_ensaio rows:", songsError);
+      setCancelling(false);
+      alert("Erro ao cancelar o ensaio. Tente novamente.");
+      return;
+    }
+
+    const { error: ensaioError } = await supabase
+      .from("ensaio")
+      .delete()
+      .eq("id", ensaio.id);
+
+    setCancelling(false);
+
+    if (ensaioError) {
+      console.error("Failed to delete ensaio row:", ensaioError);
+      alert("Erro ao cancelar o ensaio. Tente novamente.");
+      return;
+    }
+
+    navigate(-1);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         <GoBackbutton />
 
-        <div className="flex items-center justify-between mb-8 mt-2">
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-            Setlist do ensaio
+        <div className="flex flex-col gap-4 mb-8 mt-2 sm:flex-row sm:items-center sm:justify-between">
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight sm:text-3xl">
+            {`Set-list do ensaio do dia ${formatEnsaioDate(ensaio?.date)}`}
           </h1>
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-bold text-white transition hover:bg-gray-800"
-          >
-            + Adicionar Música
-          </button>
+          {thereIsEnsaio ? (
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <button
+                onClick={() => setIsAddModalOpen(true)}
+                className="w-full rounded-lg bg-gray-900 px-4 py-2 text-sm font-bold text-white transition hover:bg-gray-800 sm:w-auto"
+              >
+                + Adicionar Música
+              </button>
+              <button
+                onClick={() => setCancelModalOpen(true)}
+                className="w-full rounded-lg bg-red-900 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-800 sm:w-auto sm:ml-2"
+              >
+                Cancelar Ensaio
+              </button>
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
 
         {rehearsalSongs.length === 0 ? (
-          <p className="text-gray-500">
-            Nenhum ensaio foi agendado ou todas as músicas foram removidas.
-          </p>
+          <p className="text-gray-500">Nenhum ensaio foi agendado.</p>
         ) : (
           <>
             <ul className="grid grid-cols-1 md:grid-cols-1 gap-6">
@@ -240,6 +307,37 @@ const RehearsalScreen = () => {
                 className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-bold text-white hover:bg-gray-800 transition disabled:cursor-not-allowed disabled:bg-gray-400"
               >
                 {finishing ? "Finalizando..." : "Confirmar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for confirming ensaio cancellation */}
+      {isCancelModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm flex flex-col p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">
+              Cancelar ensaio?
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Tem certeza que deseja cancelar este ensaio? Essa ação não pode
+              ser desfeita.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setCancelModalOpen(false)}
+                disabled={cancelling}
+                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Voltar
+              </button>
+              <button
+                onClick={cancelRehearsal}
+                disabled={cancelling}
+                className="rounded-lg bg-red-900 px-4 py-2 text-sm font-bold text-white hover:bg-red-800 transition disabled:cursor-not-allowed disabled:bg-red-400"
+              >
+                {cancelling ? "Cancelando..." : "Cancelar Ensaio"}
               </button>
             </div>
           </div>
