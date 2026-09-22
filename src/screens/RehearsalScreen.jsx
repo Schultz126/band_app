@@ -184,7 +184,7 @@ const RehearsalScreen = () => {
     setSharing(true);
 
     try {
-      const file = generateSetlistPdf(ensaio, rehearsalSongs);
+      const file = await generateSetlistPdf(ensaio, rehearsalSongs);
 
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
@@ -223,13 +223,16 @@ const RehearsalScreen = () => {
       <div className="max-w-5xl mx-auto">
         <div className="flex justify-between">
           <GoBackbutton />
-          <button onClick={handleShareSetlist}>
-            {thereIsEnsaio ? (
+          {thereIsEnsaio && (
+            <button
+              onClick={handleShareSetlist}
+              disabled={sharing}
+              aria-label="Compartilhar set list"
+              className="disabled:cursor-not-allowed disabled:opacity-50"
+            >
               <CiShare2 className="size-5 mb-2 hover:text-black" />
-            ) : (
-              <></>
-            )}
-          </button>
+            </button>
+          )}
         </div>
 
         <div className="flex flex-col gap-4 mb-8 mt-2 sm:flex-row sm:items-center sm:justify-between">
