@@ -224,7 +224,11 @@ const RehearsalScreen = () => {
         <div className="flex justify-between">
           <GoBackbutton />
           <button onClick={handleShareSetlist}>
-            <CiShare2 className="size-5 mb-2 hover:text-black" />
+            {thereIsEnsaio ? (
+              <CiShare2 className="size-5 mb-2 hover:text-black" />
+            ) : (
+              <></>
+            )}
           </button>
         </div>
 
