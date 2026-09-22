@@ -7,6 +7,8 @@ import { useSetList } from "../context/SetListContext";
 import SongElement from "../components/SongElement/SongElement";
 import GoBackbutton from "../components/GoBackButton/GoBackButton";
 import GeneralButton from "../components/GeneralButton/GeneralButton";
+import { generateSetlistPdf } from "../utils/generateSetlistPdf";
+import { CiShare2 } from "react-icons/ci";
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -38,6 +40,7 @@ const RehearsalScreen = () => {
   const [finishing, setFinishing] = useState(false);
   const [isCancelModalOpen, setCancelModalOpen] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  const [sharing, setSharing] = useState(false);
   const navigate = useNavigate();
 
   // EnsaioProvider lives at the app root and only fetches once on that
@@ -174,10 +177,56 @@ const RehearsalScreen = () => {
     navigate(-1);
   };
 
+  // Generates the setlist PDF, then opens the phone's native share sheet
+  // (WhatsApp shows up there like any other app). Falls back to a plain
+  // download on browsers that don't support sharing files (mostly desktop).
+  const handleShareSetlist = async () => {
+    setSharing(true);
+
+    try {
+      const file = generateSetlistPdf(ensaio, rehearsalSongs);
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: "Set List do Ensaio",
+            text: "Set list do ensaio",
+          });
+        } catch (shareError) {
+          // AbortError just means the user closed the share sheet — not a real failure
+          if (shareError.name !== "AbortError") {
+            console.error("Failed to share setlist:", shareError);
+            alert("Não foi possível compartilhar o PDF.");
+          }
+        }
+      } else {
+        const url = URL.createObjectURL(file);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = file.name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error("Failed to generate setlist PDF:", error);
+      alert("Não foi possível gerar o PDF.");
+    }
+
+    setSharing(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
-        <GoBackbutton />
+        <div className="flex justify-between">
+          <GoBackbutton />
+          <button onClick={handleShareSetlist}>
+            <CiShare2 className="size-5 mb-2 hover:text-black" />
+          </button>
+        </div>
 
         <div className="flex flex-col gap-4 mb-8 mt-2 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight sm:text-3xl">
@@ -204,7 +253,9 @@ const RehearsalScreen = () => {
         </div>
 
         {rehearsalSongs.length === 0 ? (
-          <p className="text-gray-500">Nenhum ensaio foi agendado.</p>
+          <p className="text-gray-500">
+            Nenhum ensaio foi agendado ou todas as músicas foram removidas.
+          </p>
         ) : (
           <>
             <ul className="grid grid-cols-1 md:grid-cols-1 gap-6">
@@ -223,7 +274,7 @@ const RehearsalScreen = () => {
             <p className="mt-6 text-lg font-semibold text-gray-800">
               Duração total: {totalLength}
             </p>
-            <div className="mt-6">
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <GeneralButton
                 text={"Finalizar ensaio"}
                 onClick={() => setConfirmModalOpen(true)}

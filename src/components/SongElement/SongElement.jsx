@@ -29,6 +29,22 @@ export const SongElement = (props) => {
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
 
+  /*const totalSeconds = rehearsalSongs.reduce((total, song) => {
+    const [minutes, seconds] = song.howLong.split(":").map(Number);
+    return total + minutes * 60 + seconds;
+  }, 0);
+
+  const totalLength = [
+    Math.floor(totalSeconds / 3600),
+    Math.floor((totalSeconds % 3600) / 60),
+    totalSeconds % 60,
+  ]
+    .map((value) => String(value).padStart(2, "0"))
+    .join(":");*/
+
+  const [hours, minutes, seconds] = howLong.split(":");
+  const correctedLength = `${hours}:${minutes}`;
+
   return (
     <div className="rounded-xl border border-gray-200 bg-white shadow-sm transition hover:border-gray-300 hover:shadow-md">
       {/* Header (Expand/Retract Toggle) */}
@@ -60,7 +76,6 @@ export const SongElement = (props) => {
             onClick={() => {
               // 1. Separa as funções dos dados. Estava dando problema pq o app tentava ler funções como dados
               const { onStatusChange, onRemove, ...songData } = props;
-
               // 2. Manda apenas os dados
               navigate("/set-list/edit-song", { state: songData }); // state: é necessário para enviar os dados específicos deste componente para a tela de edição
             }}
@@ -99,7 +114,9 @@ export const SongElement = (props) => {
                 <span className="block text-gray-400 text-xs uppercase tracking-wider">
                   Length
                 </span>
-                <span className="font-semibold text-gray-700">{howLong}</span>
+                <span className="font-semibold text-gray-700">
+                  {correctedLength}
+                </span>
               </div>
               <div>
                 <span className="block text-gray-400 text-xs uppercase tracking-wider">
