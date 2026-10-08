@@ -219,7 +219,7 @@ const RehearsalScreen = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
+    <div className="app-shell py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         <div className="flex justify-between">
           <GoBackbutton />
@@ -230,26 +230,26 @@ const RehearsalScreen = () => {
               aria-label="Compartilhar set list"
               className="disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <CiShare2 className="size-5 mb-2 hover:text-black" />
+              <CiShare2 className="size-5 mb-2 text-[#c9c2b8] hover:text-white" />
             </button>
           )}
         </div>
 
         <div className="flex flex-col gap-4 mb-8 mt-2 sm:flex-row sm:items-center sm:justify-between">
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight sm:text-3xl">
+          <h1 className="band-title text-2xl sm:text-3xl">
             {`Set-list do ensaio do dia ${formatEnsaioDate(ensaio?.date)}`}
           </h1>
           {thereIsEnsaio ? (
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               <button
                 onClick={() => setIsAddModalOpen(true)}
-                className="w-full rounded-lg bg-gray-900 px-4 py-2 text-sm font-bold text-white transition hover:bg-gray-800 sm:w-auto"
+                className="band-button w-full px-4 py-2 text-sm sm:w-auto"
               >
                 + Adicionar Música
               </button>
               <button
                 onClick={() => setCancelModalOpen(true)}
-                className="w-full rounded-lg bg-red-900 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-800 sm:w-auto sm:ml-2"
+                className="w-full rounded-md border border-red-500/60 bg-red-950 px-4 py-2 text-sm font-bold uppercase tracking-wide text-red-100 transition hover:bg-red-900 sm:w-auto sm:ml-2"
               >
                 Cancelar Ensaio
               </button>
@@ -260,7 +260,7 @@ const RehearsalScreen = () => {
         </div>
 
         {rehearsalSongs.length === 0 ? (
-          <p className="text-gray-500">
+          <p className="band-muted">
             Nenhum ensaio foi agendado ou todas as músicas foram removidas.
           </p>
         ) : (
@@ -278,7 +278,7 @@ const RehearsalScreen = () => {
                 </li>
               ))}
             </ul>
-            <p className="mt-6 text-lg font-semibold text-gray-800">
+            <p className="mt-6 text-lg font-semibold text-[#f4f0e9]">
               Duração total: {totalLength}
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -294,14 +294,14 @@ const RehearsalScreen = () => {
       {/* Modal for adding new songs */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[80vh] flex flex-col">
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-xl">
-              <h2 className="text-xl font-bold text-gray-900">
+          <div className="band-panel w-full max-w-lg max-h-[80vh] flex flex-col rounded-lg">
+            <div className="flex items-center justify-between border-b border-[#3a3732] p-4">
+              <h2 className="band-title text-xl">
                 Adicionar ao Ensaio
               </h2>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="text-gray-500 hover:text-gray-900 font-bold p-2"
+                className="band-button-ghost p-2"
               >
                 ✕
               </button>
@@ -309,25 +309,25 @@ const RehearsalScreen = () => {
 
             <div className="p-2 overflow-y-auto flex-1">
               {availableSongs.length === 0 ? (
-                <p className="p-4 text-center text-gray-500">
+                <p className="band-muted p-4 text-center">
                   Todas as músicas já estão no ensaio!
                 </p>
               ) : (
-                <ul className="divide-y divide-gray-100">
+                <ul className="divide-y divide-[#302e2b]">
                   {availableSongs.map((song) => (
                     <li
                       key={song.id}
-                      className="flex justify-between items-center p-3 hover:bg-gray-50 transition rounded-lg"
+                      className="flex items-center justify-between rounded-lg p-3 transition hover:bg-white/5"
                     >
                       <div>
-                        <p className="font-semibold text-gray-800">
+                        <p className="font-semibold text-[#f4f0e9]">
                           {song.name}
                         </p>
-                        <p className="text-sm text-gray-500">{song.artist}</p>
+                        <p className="band-muted text-sm">{song.artist}</p>
                       </div>
                       <button
                         onClick={() => handleAddSong(song)}
-                        className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100"
+                        className="rounded-md border border-[#5a554d] px-3 py-1.5 text-sm font-semibold text-[#f4f0e9] hover:bg-white/10"
                       >
                         Adicionar
                       </button>

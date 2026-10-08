@@ -11,7 +11,7 @@ const supabase = createClient(
 );
 
 const inputClass =
-  "mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 shadow-sm transition focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900";
+  "band-input mt-1";
 
 const DEFAULT_SONG = {
   name: "",
@@ -126,21 +126,21 @@ const AddSongScreen = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 px-4 py-10 sm:px-6 lg:px-8">
+    <div className="app-shell px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-5xl">
         <GoBackbutton />
 
-        <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-lg sm:p-8">
+        <div className="band-panel mt-6 rounded-lg p-6 sm:p-8">
           <div className="mb-8">
             <div className="flex flex-row justify-between">
-              <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+              <h1 className="band-title text-3xl">
                 {isEditing ? `Alterar ${initialData.name}` : "Adicionar música"}
               </h1>
               {isEditing ? (
                 <button
                   type="button"
                   onClick={handleDelete}
-                  className="px-4 py-2 text-sm font-bold text-red-600 transition-colors hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                  className="px-4 py-2 text-sm font-bold text-red-400 transition-colors hover:text-red-200"
                 >
                   <BsTrash3 className="size-5" />
                 </button>
@@ -148,7 +148,7 @@ const AddSongScreen = () => {
                 <></>
               )}
             </div>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="band-muted mt-2 text-sm">
               {isEditing
                 ? "Edite os detalhes da música selecionada."
                 : "Preencha os detalhes para incluir uma nova música no set list."}
@@ -157,7 +157,7 @@ const AddSongScreen = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid gap-4 sm:grid-cols-2">
-              <label className="block text-sm font-semibold text-gray-700">
+              <label className="block text-sm font-semibold text-[#d8d1c7]">
                 Nome da música
                 <input
                   className={inputClass}
@@ -167,7 +167,7 @@ const AddSongScreen = () => {
                 />
               </label>
 
-              <label className="block text-sm font-semibold text-gray-700">
+              <label className="block text-sm font-semibold text-[#d8d1c7]">
                 Artista
                 <input
                   className={inputClass}
@@ -177,7 +177,7 @@ const AddSongScreen = () => {
                 />
               </label>
 
-              <label className="block text-sm font-semibold text-gray-700">
+              <label className="block text-sm font-semibold text-[#d8d1c7]">
                 Tom
                 <select
                   className={inputClass}
@@ -192,7 +192,7 @@ const AddSongScreen = () => {
                 </select>
               </label>
 
-              <label className="block text-sm font-semibold text-gray-700">
+              <label className="block text-sm font-semibold text-[#d8d1c7]">
                 Status
                 <select
                   className={inputClass}
@@ -206,7 +206,7 @@ const AddSongScreen = () => {
                 </select>
               </label>
 
-              <label className="block text-sm font-semibold text-gray-700">
+              <label className="block text-sm font-semibold text-[#d8d1c7]">
                 BPM
                 <input
                   className={inputClass}
@@ -218,7 +218,7 @@ const AddSongScreen = () => {
                 />
               </label>
 
-              <label className="block text-sm font-semibold text-gray-700">
+              <label className="block text-sm font-semibold text-[#d8d1c7]">
                 Duração
                 <input
                   className={inputClass}
@@ -229,7 +229,7 @@ const AddSongScreen = () => {
                 />
               </label>
 
-              <label className="block text-sm font-semibold text-gray-700">
+              <label className="block text-sm font-semibold text-[#d8d1c7]">
                 Animação
                 <select
                   className={inputClass}
@@ -245,7 +245,7 @@ const AddSongScreen = () => {
                 </select>
               </label>
 
-              <label className="block text-sm font-semibold text-gray-700">
+              <label className="block text-sm font-semibold text-[#d8d1c7]">
                 Pedal
                 <input
                   className={inputClass}
@@ -257,7 +257,7 @@ const AddSongScreen = () => {
               </label>
             </div>
 
-            <label className="block text-sm font-semibold text-gray-700">
+            <label className="block text-sm font-semibold text-[#d8d1c7]">
               Observações
               <textarea
                 className={inputClass}
@@ -269,9 +269,9 @@ const AddSongScreen = () => {
               />
             </label>
 
-            <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-700">
+            <label className="flex cursor-pointer items-center gap-3 rounded-md border border-[#3a3732] bg-black/20 px-4 py-3 text-sm font-semibold text-[#d8d1c7]">
               <input
-                className="h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
+                className="h-4 w-4 rounded border-[#5a554d] bg-[#151514] text-red-600 focus:ring-red-600"
                 name="hasAcousticGuitar"
                 type="checkbox"
                 checked={song.hasAcousticGuitar}
@@ -280,11 +280,11 @@ const AddSongScreen = () => {
               Usa violão
             </label>
 
-            <div className="border-t border-gray-100 pt-6">
+            <div className="border-t border-[#3a3732] pt-6">
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full rounded-lg bg-gray-900 px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-400"
+                className="band-button w-full px-4 py-3 text-sm"
               >
                 {saving
                   ? "Salvando..."
@@ -303,15 +303,15 @@ const AddSongScreen = () => {
           onClick={() => !deleting && setShowDeleteModal(false)}
         >
           <div
-            className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-lg sm:p-8"
+            className="band-panel w-full max-w-md rounded-lg p-6 sm:p-8"
             onClick={(event) => event.stopPropagation()}
           >
-            <h2 className="text-xl font-bold tracking-tight text-gray-900">
+            <h2 className="band-title text-xl">
               Excluir música?
             </h2>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="band-muted mt-2 text-sm">
               Tem certeza que deseja excluir{" "}
-              <span className="font-semibold text-gray-800">
+              <span className="font-semibold text-[#f4f0e9]">
                 {initialData?.name}
               </span>
               ? Essa ação não pode ser desfeita.
@@ -322,7 +322,7 @@ const AddSongScreen = () => {
                 type="button"
                 disabled={deleting}
                 onClick={() => setShowDeleteModal(false)}
-                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-md border border-[#5a554d] px-4 py-2 text-sm font-bold text-[#e5ded4] transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Cancelar
               </button>
@@ -330,7 +330,7 @@ const AddSongScreen = () => {
                 type="button"
                 disabled={deleting}
                 onClick={confirmDelete}
-                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-red-300"
+                className="rounded-md bg-red-800 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-950"
               >
                 {deleting ? "Excluindo..." : "Excluir"}
               </button>

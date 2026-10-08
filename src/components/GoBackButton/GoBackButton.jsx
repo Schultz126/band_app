@@ -7,7 +7,7 @@ const GoBackbutton = () => {
       onClick={() => {
         navigate(-1);
       }}
-      className="group flex items-center text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors"
+      className="band-button-ghost group flex items-center text-sm"
     >
       {/* SVG Left Arrow Icon */}
       <svg

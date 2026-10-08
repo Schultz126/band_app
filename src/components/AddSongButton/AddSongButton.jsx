@@ -4,7 +4,7 @@ const AddSongButton = () => {
   const navigate = useNavigate();
   return (
     <button
-      className="group flex items-center font-semibold text-gray-500 hover:text-gray-900 transition-colors group-hover:-translate-x-1 text-sm pr-2 duration-200"
+      className="band-button-ghost group flex items-center text-sm pr-2 duration-200"
       onClick={() => {
         navigate("/set-list/add-song");
       }}

@@ -1,3 +1,93 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    font-family: "Arial Narrow", "Roboto Condensed", "Helvetica Neue", Arial, sans-serif;
+    color: #f4f0e9;
+    background: #0a0a0a;
+  }
+
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #0a0a0a;
+    background-image:
+      radial-gradient(circle at 20% 0%, rgba(185, 40, 35, 0.12), transparent 32rem),
+      radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.045), transparent 28rem),
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.018) 0, rgba(255, 255, 255, 0.018) 1px, transparent 1px, transparent 4px);
+  }
+
+  button, input, select, textarea { font: inherit; }
+}
+
+@layer components {
+  .app-shell {
+    min-height: 100vh;
+    background: transparent;
+    color: #f4f0e9;
+  }
+
+  .band-panel {
+    border: 1px solid #3a3732;
+    background: linear-gradient(145deg, rgba(29, 28, 26, 0.98), rgba(16, 16, 15, 0.98));
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45), inset 0 1px rgba(255, 255, 255, 0.04);
+  }
+
+  .band-title {
+    color: #f4f0e9;
+    font-weight: 900;
+    letter-spacing: -0.045em;
+    text-transform: uppercase;
+  }
+
+  .band-muted { color: #aaa49b; }
+
+  .band-input {
+    width: 100%;
+    border: 1px solid #4b4741;
+    border-radius: 0.35rem;
+    background: #151514;
+    color: #f4f0e9;
+    padding: 0.6rem 0.75rem;
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+  }
+
+  .band-input:focus {
+    outline: none;
+    border-color: #c63b33;
+    box-shadow: 0 0 0 3px rgba(198, 59, 51, 0.18);
+  }
+
+  .band-button {
+    border: 1px solid #d24b42;
+    border-radius: 0.35rem;
+    background: #b52e28;
+    color: #fffaf2;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: transform 150ms ease, background 150ms ease, box-shadow 150ms ease;
+  }
+
+  .band-button:hover { background: #d13b33; box-shadow: 0 8px 24px rgba(181, 46, 40, 0.26); }
+  .band-button:active { transform: translateY(1px); }
+  .band-button:disabled { cursor: not-allowed; opacity: 0.45; }
+
+  .band-button-ghost {
+    color: #c9c2b8;
+    font-weight: 700;
+    transition: color 150ms ease;
+  }
+  .band-button-ghost:hover { color: #fffaf2; }
+
+  .song-card {
+    border: 1px solid #3a3732;
+    border-radius: 0.45rem;
+    background: rgba(25, 24, 22, 0.92);
+    color: #f4f0e9;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  }
+}

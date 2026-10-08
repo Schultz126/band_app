@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavigationButton from "../components/NavigationButton/NavigationButton";
 import { createClient } from "@supabase/supabase-js";
+import logo from "../assets/NoTonesLogo.jpeg";
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -47,12 +48,17 @@ const StartingScreen = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
-      <div className="max-w-sm w-full bg-white shadow-lg rounded-2xl p-8 text-center border border-gray-200">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Bem-vindo de volta
-        </h1>
-        <p className="text-gray-500 mb-8 text-sm">No tones</p>
+    <div className="app-shell flex flex-col items-center justify-center p-6">
+      <div className="band-panel max-w-sm w-full rounded-lg p-8 text-center">
+        <img
+          src={logo}
+          alt="No Tones"
+          className="mx-auto mb-7 w-48 mix-blend-screen sm:w-56"
+        />
+        <p className="band-muted mb-2 text-xs font-bold uppercase tracking-[0.24em]">
+          Gerenciador da banda
+        </p>
+        <h1 className="band-title mb-8 text-3xl">Prontos para tocar?</h1>
 
         <div className="flex flex-col gap-4">
           <NavigationButton

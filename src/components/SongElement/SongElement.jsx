@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 const SONG_STATUSES = ["ok", "ensaiar", "tirar"];
 const STATUS_CLASSES = {
-  ok: "border-green-200 bg-green-50 text-green-700",
-  ensaiar: "border-yellow-200 bg-yellow-50 text-yellow-700",
-  tirar: "border-red-200 bg-red-50 text-red-700",
+  ok: "border-emerald-800 bg-emerald-950/50 text-emerald-300",
+  ensaiar: "border-amber-800 bg-amber-950/50 text-amber-300",
+  tirar: "border-red-900 bg-red-950/50 text-red-300",
 };
 
 export const SongElement = (props) => {
@@ -46,7 +46,7 @@ export const SongElement = (props) => {
   const correctedLength = `${hours}:${minutes}`;
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white shadow-sm transition hover:border-gray-300 hover:shadow-md">
+    <div className="song-card transition hover:border-[#5a554d] hover:shadow-md">
       {/* Header (Expand/Retract Toggle) */}
       <button
         type="button"
@@ -54,14 +54,14 @@ export const SongElement = (props) => {
         aria-expanded={isExpanded}
         className="flex w-full items-center justify-between px-4 py-3 text-left"
       >
-        <span className="font-semibold text-gray-800">{name}</span>
+        <span className="font-semibold tracking-wide text-[#f4f0e9]">{name}</span>
         <span className="flex items-center gap-3">
           <span
             className={`min-w-14 rounded border px-2 py-1 text-center text-xs font-semibold ${STATUS_CLASSES[status]}`}
           >
             {status}
           </span>
-          <span className="text-gray-400" aria-hidden="true">
+          <span className="text-[#938d84]" aria-hidden="true">
             {isExpanded ? "▴" : "▾"}
           </span>
         </span>
@@ -69,7 +69,7 @@ export const SongElement = (props) => {
 
       {/* Expanded Content */}
       {isExpanded && (
-        <div className="border-t border-gray-100 p-4">
+        <div className="border-t border-[#3a3732] p-4">
           {/* Clickable Area for Navigation */}
           <div
             className="cursor-pointer mb-4 hover:opacity-80 transition-opacity"
@@ -82,62 +82,62 @@ export const SongElement = (props) => {
           >
             <div className="flex justify-between items-start mb-3">
               <div>
-                <p className="text-sm text-gray-500 font-medium">{artist}</p>
+                <p className="band-muted text-sm font-medium">{artist}</p>
               </div>
-              <div className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded-full flex items-center">
+              <div className="flex items-center rounded-full border border-amber-800 bg-amber-950/50 px-2 py-1 text-xs font-bold text-amber-300">
                 ⭐ {star}
               </div>
             </div>
 
             {hasAcousticGuitar && (
               <div className="mb-4">
-                <span className="bg-amber-50 text-amber-700 text-xs font-semibold px-2 py-1 rounded border border-amber-200">
+                <span className="rounded border border-amber-800 bg-amber-950/50 px-2 py-1 text-xs font-semibold text-amber-300">
                   Acoustic Guitar
                 </span>
               </div>
             )}
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-gray-50 p-3 rounded-lg mb-4 text-sm">
+            <div className="mb-4 grid grid-cols-2 gap-3 rounded-md border border-[#34312d] bg-black/20 p-3 text-sm sm:grid-cols-4">
               <div>
-                <span className="block text-gray-400 text-xs uppercase tracking-wider">
+                <span className="block text-xs uppercase tracking-wider text-[#938d84]">
                   Tune
                 </span>
-                <span className="font-semibold text-gray-700">{tune}</span>
+                <span className="font-semibold text-[#e5ded4]">{tune}</span>
               </div>
               <div>
-                <span className="block text-gray-400 text-xs uppercase tracking-wider">
+                <span className="block text-xs uppercase tracking-wider text-[#938d84]">
                   BPM
                 </span>
-                <span className="font-semibold text-gray-700">{bpm}</span>
+                <span className="font-semibold text-[#e5ded4]">{bpm}</span>
               </div>
               <div>
-                <span className="block text-gray-400 text-xs uppercase tracking-wider">
+                <span className="block text-xs uppercase tracking-wider text-[#938d84]">
                   Length
                 </span>
-                <span className="font-semibold text-gray-700">
+                <span className="font-semibold text-[#e5ded4]">
                   {correctedLength}
                 </span>
               </div>
               <div>
-                <span className="block text-gray-400 text-xs uppercase tracking-wider">
+                <span className="block text-xs uppercase tracking-wider text-[#938d84]">
                   Plays
                 </span>
-                <span className="font-semibold text-gray-700">
+                <span className="font-semibold text-[#e5ded4]">
                   {howManyTimesHasBeingPlayed}
                 </span>
               </div>
             </div>
 
-            <div className="text-sm text-gray-600 space-y-1">
+            <div className="band-muted space-y-1 text-sm">
               <p>
-                <span className="font-semibold text-gray-800">Pedal:</span>{" "}
+                <span className="font-semibold text-[#e5ded4]">Pedal:</span>{" "}
                 {pedal}
               </p>
               <p>
-                <span className="font-semibold text-gray-800">Obs: </span>{" "}
+                <span className="font-semibold text-[#e5ded4]">Obs: </span>{" "}
                 {obs ? obs : "Nenhuma"}
               </p>
-              <p className="text-gray-400 text-xs mt-3 text-right">
+              <p className="mt-3 text-right text-xs text-[#777168]">
                 Last Played:{" "}
                 {lastPlayed ? (
                   // lastPlayed comes back from Supabase as an ISO string, not
@@ -151,10 +151,10 @@ export const SongElement = (props) => {
             </div>
           </div>
 
-          <div className="border-t border-gray-100 pt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex flex-col gap-3 border-t border-[#3a3732] pt-3 sm:flex-row sm:items-end sm:justify-between">
             {/* Status Dropdown */}
             <div className="flex-1">
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
+              <label className="mb-1 block text-sm font-semibold text-[#d8d1c7]">
                 Alterar status
               </label>
               <select
@@ -162,7 +162,7 @@ export const SongElement = (props) => {
                 onChange={(event) =>
                   onStatusChange && onStatusChange(event.target.value)
                 }
-                className="w-full sm:w-48 rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+                className="band-input sm:w-48"
               >
                 {SONG_STATUSES.map((songStatus) => (
                   <option key={songStatus} value={songStatus}>
@@ -176,7 +176,7 @@ export const SongElement = (props) => {
             {onRemove && (
               <button
                 onClick={onRemove}
-                className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-bold text-red-700 transition hover:bg-red-100"
+                className="rounded-md border border-red-900 bg-red-950/50 px-4 py-2 text-sm font-bold text-red-300 transition hover:bg-red-950"
               >
                 Remover do Ensaio
               </button>
