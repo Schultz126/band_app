@@ -28,20 +28,6 @@ export const SongElement = (props) => {
 
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
-
-  /*const totalSeconds = rehearsalSongs.reduce((total, song) => {
-    const [minutes, seconds] = song.howLong.split(":").map(Number);
-    return total + minutes * 60 + seconds;
-  }, 0);
-
-  const totalLength = [
-    Math.floor(totalSeconds / 3600),
-    Math.floor((totalSeconds % 3600) / 60),
-    totalSeconds % 60,
-  ]
-    .map((value) => String(value).padStart(2, "0"))
-    .join(":");*/
-
   const [hours, minutes, seconds] = howLong.split(":");
   const correctedLength = `${hours}:${minutes}`;
 
@@ -54,7 +40,9 @@ export const SongElement = (props) => {
         aria-expanded={isExpanded}
         className="flex w-full items-center justify-between px-4 py-3 text-left"
       >
-        <span className="font-semibold tracking-wide text-[#f4f0e9]">{name}</span>
+        <span className="font-semibold tracking-wide text-[#f4f0e9]">
+          {name}
+        </span>
         <span className="flex items-center gap-3">
           <span
             className={`min-w-14 rounded border px-2 py-1 text-center text-xs font-semibold ${STATUS_CLASSES[status]}`}

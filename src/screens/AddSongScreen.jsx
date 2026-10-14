@@ -10,8 +10,7 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY,
 );
 
-const inputClass =
-  "band-input mt-1";
+const inputClass = "band-input mt-1";
 
 const DEFAULT_SONG = {
   name: "",
@@ -107,15 +106,29 @@ const AddSongScreen = () => {
   const confirmDelete = async () => {
     setDeleting(true);
 
-    const { error } = await supabase
+    const { error1 } = await supabase
+      .from("musicas_do_ensaio")
+      .delete()
+      .eq("id", initialData.id);
+
+    const { error2 } = await supabase
       .from("set_list")
       .delete()
       .eq("id", initialData.id);
 
     setDeleting(false);
 
-    if (error) {
-      console.error("Failed to delete song:", error);
+    if (error1) {
+      console.error(
+        "Failed to delete song from musicas_do_ensaio table:",
+        error1,
+      );
+      alert("Erro ao excluir a música. Tente novamente.");
+      return;
+    }
+
+    if (error2) {
+      console.error("Failed to delete song from set_list table:", error2);
       alert("Erro ao excluir a música. Tente novamente.");
       return;
     }
@@ -306,9 +319,7 @@ const AddSongScreen = () => {
             className="band-panel w-full max-w-md rounded-lg p-6 sm:p-8"
             onClick={(event) => event.stopPropagation()}
           >
-            <h2 className="band-title text-xl">
-              Excluir música?
-            </h2>
+            <h2 className="band-title text-xl">Excluir música?</h2>
             <p className="band-muted mt-2 text-sm">
               Tem certeza que deseja excluir{" "}
               <span className="font-semibold text-[#f4f0e9]">
