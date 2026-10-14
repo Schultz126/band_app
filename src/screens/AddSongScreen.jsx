@@ -109,7 +109,7 @@ const AddSongScreen = () => {
     const { error1 } = await supabase
       .from("musicas_do_ensaio")
       .delete()
-      .eq("id", initialData.id);
+      .eq("musica_id", initialData.id);
 
     const { error2 } = await supabase
       .from("set_list")
