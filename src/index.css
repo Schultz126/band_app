@@ -61,6 +61,22 @@
     box-shadow: 0 0 0 3px rgba(198, 59, 51, 0.18);
   }
 
+  .band-select {
+    appearance: none;
+    padding-right: 2.5rem;
+    background-color: #151514;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='m5 7.5 5 5 5-5' stroke='%23aaa49b' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    background-size: 1rem;
+    cursor: pointer;
+  }
+
+  .band-select option {
+    background: #151514;
+    color: #f4f0e9;
+  }
+
   .band-button {
     border: 1px solid #d24b42;
     border-radius: 0.35rem;

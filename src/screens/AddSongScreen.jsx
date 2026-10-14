@@ -193,7 +193,7 @@ const AddSongScreen = () => {
               <label className="block text-sm font-semibold text-[#d8d1c7]">
                 Tom
                 <select
-                  className={inputClass}
+                  className={`${inputClass} band-select`}
                   name="tune"
                   value={song.tune}
                   onChange={updateSong}
@@ -201,14 +201,14 @@ const AddSongScreen = () => {
                   <option value="E">E</option>
                   <option value="D#">D#</option>
                   <option value="D">D</option>
-                  <option value="C#">C</option>
+                  <option value="C#">C#</option>
                 </select>
               </label>
 
               <label className="block text-sm font-semibold text-[#d8d1c7]">
                 Status
                 <select
-                  className={inputClass}
+                  className={`${inputClass} band-select`}
                   name="status"
                   value={song.status}
                   onChange={updateSong}
@@ -245,7 +245,7 @@ const AddSongScreen = () => {
               <label className="block text-sm font-semibold text-[#d8d1c7]">
                 Animação
                 <select
-                  className={inputClass}
+                  className={`${inputClass} band-select`}
                   name="star"
                   value={song.star}
                   onChange={updateSong}

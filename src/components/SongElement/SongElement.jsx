@@ -28,7 +28,7 @@ export const SongElement = (props) => {
 
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [hours, minutes, seconds] = howLong.split(":");
+  const [hours = "00", minutes = "00"] = (howLong ?? "00:00").split(":");
   const correctedLength = `${hours}:${minutes}`;
 
   return (
@@ -142,15 +142,19 @@ export const SongElement = (props) => {
           <div className="flex flex-col gap-3 border-t border-[#3a3732] pt-3 sm:flex-row sm:items-end sm:justify-between">
             {/* Status Dropdown */}
             <div className="flex-1">
-              <label className="mb-1 block text-sm font-semibold text-[#d8d1c7]">
+              <label
+                htmlFor={`song-status-${props.id ?? name}`}
+                className="mb-1 block text-sm font-semibold text-[#d8d1c7]"
+              >
                 Alterar status
               </label>
               <select
+                id={`song-status-${props.id ?? name}`}
                 value={status}
                 onChange={(event) =>
                   onStatusChange && onStatusChange(event.target.value)
                 }
-                className="band-input sm:w-48"
+                className="band-input band-select sm:w-48"
               >
                 {SONG_STATUSES.map((songStatus) => (
                   <option key={songStatus} value={songStatus}>
