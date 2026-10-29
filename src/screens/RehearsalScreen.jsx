@@ -15,9 +15,6 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY,
 );
 
-// ensaio.date comes back as a timestamptz string (e.g. "2026-09-19T00:00:00+00:00").
-// timeZone: "UTC" keeps the displayed day from shifting backward for anyone
-// west of UTC, since the time portion is always midnight UTC.
 const formatEnsaioDate = (dateString) => {
   if (!dateString) return "";
   return new Date(dateString).toLocaleDateString("pt-BR", {
@@ -43,11 +40,6 @@ const RehearsalScreen = () => {
   const [sharing, setSharing] = useState(false);
   const navigate = useNavigate();
 
-  // EnsaioProvider lives at the app root and only fetches once on that
-  // initial mount, so if a rehearsal was just scheduled and we navigated
-  // straight here, its `ensaio` can be stale. Refresh it every time this
-  // screen mounts — MusicasDoEnsaioProvider reacts to ensaio?.id changing,
-  // so the songs will follow automatically once this resolves.
   useEffect(() => {
     reloadEnsaio();
   }, [reloadEnsaio]);
@@ -67,9 +59,6 @@ const RehearsalScreen = () => {
     .map((value) => String(value).padStart(2, "0"))
     .join(":");
 
-  // --- Actions ---
-  // musica_id (the join table's FK to set_list) is the same value as the
-  // song's own id, so we can pass item.id straight through.
   const handleRemoveSong = async (musicaId) => {
     const { error } = await removeSong(musicaId);
     if (error) alert("Erro ao remover música do ensaio. Tente novamente.");
@@ -84,8 +73,6 @@ const RehearsalScreen = () => {
     setIsAddModalOpen(false);
   };
 
-  // status lives on set_list itself (shared across the whole app, not
-  // just this rehearsal), so it's updated there directly.
   const handleStatusChange = async (songId, newStatus) => {
     const { error } = await supabase
       .from("set_list")
@@ -296,9 +283,7 @@ const RehearsalScreen = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
           <div className="band-panel w-full max-w-lg max-h-[80vh] flex flex-col rounded-lg">
             <div className="flex items-center justify-between border-b border-[#3a3732] p-4">
-              <h2 className="band-title text-xl">
-                Adicionar ao Ensaio
-              </h2>
+              <h2 className="band-title text-xl">Adicionar ao Ensaio</h2>
               <button
                 onClick={() => setIsAddModalOpen(false)}
                 className="band-button-ghost p-2"
