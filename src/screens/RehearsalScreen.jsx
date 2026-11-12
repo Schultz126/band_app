@@ -164,9 +164,6 @@ const RehearsalScreen = () => {
     navigate(-1);
   };
 
-  // Generates the setlist PDF, then opens the phone's native share sheet
-  // (WhatsApp shows up there like any other app). Falls back to a plain
-  // download on browsers that don't support sharing files (mostly desktop).
   const handleShareSetlist = async () => {
     setSharing(true);
 
@@ -181,7 +178,6 @@ const RehearsalScreen = () => {
             text: "Set list do ensaio",
           });
         } catch (shareError) {
-          // AbortError just means the user closed the share sheet — not a real failure
           if (shareError.name !== "AbortError") {
             console.error("Failed to share setlist:", shareError);
             alert("Não foi possível compartilhar o PDF.");
@@ -278,7 +274,7 @@ const RehearsalScreen = () => {
         )}
       </div>
 
-      {/* Modal for adding new songs */}
+      {/* Modal para adicionar novas músicas*/}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
           <div className="band-panel w-full max-w-lg max-h-[80vh] flex flex-col rounded-lg">
@@ -325,7 +321,7 @@ const RehearsalScreen = () => {
         </div>
       )}
 
-      {/* Modal for confirming rehearsal completion */}
+      {/* Modal para confirmar o encerramento do ensaio*/}
       {isConfirmModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-sm flex flex-col p-6">
@@ -356,7 +352,7 @@ const RehearsalScreen = () => {
         </div>
       )}
 
-      {/* Modal for confirming ensaio cancellation */}
+      {/* Modal para cancelar ensaio*/}
       {isCancelModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-sm flex flex-col p-6">

@@ -21,6 +21,12 @@ const compareSongsByStatus = (a, b) => {
   return statusA.localeCompare(statusB, "pt-BR");
 };
 
+const compareSongsByArtist = (a, b) => {
+  const statusA = (a.artist ?? "").toLowerCase();
+  const statusB = (b.artist ?? "").toLowerCase();
+  return statusA.localeCompare(statusB, "pt-BR");
+};
+
 const compareByTimesPlayed = (a, b) => {
   const timesA = a.howManyTimesHasBeingPlayed;
   const timesB = b.howManyTimesHasBeingPlayed;
@@ -48,6 +54,8 @@ const SetListScreen = () => {
       case "times":
         setDisplayedSongs(() => [...songs].sort(compareByTimesPlayed));
         break;
+      case "artist":
+        setDisplayedSongs(() => [...songs].sort(compareSongsByArtist));
     }
   }, [songs, selectedSort]);
 
@@ -145,10 +153,10 @@ const SetListScreen = () => {
                   aria-label="Filtrar e ordenar músicas"
                   title="Filtrar e ordenar músicas"
                 >
-                  <option value="pad">Padrão</option>
                   <option value="a-z">A-Z</option>
                   <option value="status">Status</option>
                   <option value="times">Frequência</option>
+                  <option value="artist">Artista</option>
                 </select>
               </div>
               <button

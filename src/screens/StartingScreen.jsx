@@ -58,7 +58,7 @@ const StartingScreen = () => {
         <p className="band-muted mb-2 text-xs font-bold uppercase tracking-[0.24em]">
           Gerenciador da banda
         </p>
-        <h1 className="band-title mb-8 text-3xl">Prontos para tocar?</h1>
+        <h1 className="band-title mb-8 text-3xl">Bem vindo de volta</h1>
 
         <div className="flex flex-col gap-4">
           <NavigationButton
