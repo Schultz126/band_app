@@ -28,8 +28,10 @@ export const SongElement = (props) => {
 
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [hours = "00", minutes = "00"] = (howLong ?? "00:00").split(":");
-  const correctedLength = `${hours}:${minutes}`;
+  const [hours = "00", minutes = "00", seconds = "00"] = (
+    howLong ?? "00:00:00"
+  ).split(":");
+  const correctedLength = `${minutes}:${seconds}`;
 
   return (
     <div className="song-card transition hover:border-[#5a554d] hover:shadow-md">

@@ -109,8 +109,8 @@ const SetListScreen = () => {
   };
 
   return (
-    <div className="app-shell px-4 pb-10 pt-64 sm:px-6 sm:pt-56 lg:px-8">
-      <div className="fixed inset-x-0 top-0 z-10 border-b border-[#3a3732] bg-[#0a0a0a]/95 px-4 py-4 shadow-sm backdrop-blur sm:px-6 lg:px-8">
+    <div className="app-shell px-4 pb-10 sm:px-6 lg:px-8">
+      <div className="relative w-full shrink-0 border-b border-[#3a3732] bg-[#0a0a0a]/95 px-4 py-4 shadow-sm backdrop-blur sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl">
           <header className="mb-3 flex justify-between">
             <GoBackbutton />
@@ -127,7 +127,7 @@ const SetListScreen = () => {
           <div className="band-panel rounded-md p-3 sm:flex sm:items-center sm:justify-between">
             <p className="band-muted mb-3 text-sm sm:mb-0">
               {pendingChanges === 0
-                ? "Selecione uma música para ver os detalhes e alterar seu status."
+                ? ""
                 : `${pendingChanges} ${pendingChanges === 1 ? "alteração" : "alterações"} aguardando confirmação.`}
             </p>
             <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
